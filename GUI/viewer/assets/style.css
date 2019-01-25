@@ -1,0 +1,135 @@
+.row{
+  margin-right: 0;
+  margin-left: 0;
+  width: 100%;
+}
+.fa{
+  font-size: 18pt;
+  color: white;
+}
+
+.my-btn {
+	display: inline-block;
+	position: relative;
+	width: 60px;
+	height: 40px;
+	border: white 3px solid;
+	border-radius: 3px;
+	cursor: pointer;
+	transition: border 0.1s ease-in-out;
+	color: white;
+	/*margin-left: auto;
+	margin-right: auto;*/
+}
+
+.my-btn:hover{
+	/*background-color: rgba(127,219,255, 0.8);*/
+	transition: border-color 0.3s ease-in-out;
+	border-color: #AAA;
+	color: #444 !important;
+}
+
+.my-btn .bar {
+	display: inline-block;
+	position: absolute;
+	top: 7px;
+	left: 5px;
+	width: 3px;
+	height: 20px;
+	border-radius: 3px;
+	background-color: white;
+	transform-origin: center;
+	transition: transform 0.4s ease-in-out, background 0.1s ease-in-out;
+}
+
+.my-btn.pause .bar.bar-1 {
+	transform: translateX(13.5px) translateY(0px) rotate(0deg);
+		
+}
+
+.my-btn.pause .bar.bar-2 {
+	transform: translateX(24px) translateY(0px) rotate(0deg);
+}
+
+.my-btn.play .bar.bar-1 {
+	transform: translateX(20px) translateY(-5px) rotate(-55deg);
+		
+}
+
+.my-btn.play .bar.bar-2 {
+	transform: translateX(20px) translateY(5px) rotate(-125deg);
+}
+
+.my-btn .fa{
+	position: absolute;
+	top: 5px;
+	left: 13px;
+	color: white;
+}
+
+.my-container{
+	margin-left: auto;
+	margin-right: auto;
+	width: 20%;
+}
+
+.table-dark{
+	background-color: rgba(0, 0, 0, 0) !important; 
+}
+
+.table-danger, .table-success, .table-info{
+	color: black !important;
+}
+
+.table-danger{
+	background-color: rgba(255, 0, 0, 0.8) !important;
+}
+
+.row{
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+._dash-undo-redo {
+  display: none;
+}
+
+
+.moves{
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+.my-graph{
+	width: 99%;
+	margin-left: 10px;
+	margin-right: 10px;
+	max-width: 50000px;
+	min-height: 472px;
+}
+
+.main-div{
+	background: linear-gradient(135deg, #000, #323232);
+	background-color: #323232;
+}
+
+hr{
+    border: 0;
+    height: 1px;
+    background-image: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0));
+}
+
+button{
+	color: white !important;
+}
+
+body{
+	overflow-y: scroll;
+
+}
+
+p.navbar-text{
+	margin-bottom: 0;
+	font-size: 13pt;
+	margin-left: 300px;
+}
