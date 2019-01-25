@@ -108,9 +108,9 @@ You can even use aliases if you do not modify p before using the alias.
 """
 
 #--------------------AUX TREES-----------------------
-from bintree import BinaryTree
-from rb import RBNode, RED, BLACK
-from naive import perfect_inserter
+from tree.bintree import BinaryTree
+from tree.rb import RBNode, RED, BLACK
+from tree.naive import perfect_inserter
 #-------------------\AUX TREES-----------------------
 
 import datetime as dt
@@ -1275,7 +1275,7 @@ class TangoTree(BinaryTree):
 
 import sys
 sys.path.insert(2, '../viewer/')
-from treeview import NodeShape
+from viewer.treeview import NodeShape
 
 
 def node_shape(node):

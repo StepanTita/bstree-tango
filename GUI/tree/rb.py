@@ -1,5 +1,5 @@
-from bintree import Node
-from naive import NaiveBST
+from tree.bintree import Node
+from tree.naive import NaiveBST
 
 RED = 'red'
 BLACK = 'black'

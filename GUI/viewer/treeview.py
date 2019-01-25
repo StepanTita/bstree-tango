@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #---------------Views--------------
-from treelayout import SpaceEfficientBinaryTreeLayout
+from viewer.treelayout import SpaceEfficientBinaryTreeLayout
 #---------------\Views-------------
 
 #-----------DASH Modules-----------

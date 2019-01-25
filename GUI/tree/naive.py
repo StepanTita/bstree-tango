@@ -1,4 +1,4 @@
-from bintree import BinaryTree, Node
+from tree.bintree import BinaryTree, Node
 
 
 class NaiveBST(BinaryTree):
