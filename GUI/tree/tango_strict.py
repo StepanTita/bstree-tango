@@ -1334,10 +1334,12 @@ class ParodyTree(BinaryTree):
             if node.right is not None:
                 node.right.is_root = True
             self.find(node.left, key)
-        else:
+        elif node.key < key:
             if node.left is not None:
                 node.left.is_root = True
             self.find(node.right, key)
+        else:
+            return
 
 
 def main():

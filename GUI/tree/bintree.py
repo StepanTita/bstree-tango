@@ -1,4 +1,6 @@
-from bstvis.viewer import Viewable
+import sys
+sys.path.insert(5, '../viewer')
+from viewer.treeview import Viewable
 
 
 class BinaryTree(Viewable):

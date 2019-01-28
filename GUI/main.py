@@ -453,4 +453,4 @@ def update_graph(data_names, n_clicks_next=0, n_clicks_prev=0, n_clicks_add=0, v
     return graphs
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=False)
