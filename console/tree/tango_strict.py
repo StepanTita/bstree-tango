@@ -1250,43 +1250,6 @@ def main():
         print(t.search(q))
 
 
-def sample_tree():
-    # manually setup a sample tree
-    universe = range(1, 16)
-    t = TangoTree(universe)
-    nodes = dict()
-
-    #                  key, data, pare, left,    right,     tree, color, bh,d, ir
-    nodes[1] = TangoNode(1, None, None, None,     None,     None, BLACK, 1, 3, True)
-
-    nodes[7] = TangoNode(7, None, None, None,     None,     None, BLACK, 1, 3, True)
-
-    nodes[5] = TangoNode(5, None, None, None,     None,     None, RED,   0, 3, False)
-    nodes[6] = TangoNode(6, None, None, nodes[5], nodes[7], None, BLACK, 1, 2, True)
-
-    nodes[9] = TangoNode(9, None, None, None,     None,     None, BLACK, 1, 3, True)
-
-    nodes[10] = TangoNode(10, None, None, nodes[9], None,   None, RED,   0, 2, False)
-    nodes[11] = TangoNode(11, None, None, nodes[10], None,  None, BLACK, 1, 3, True)
-
-    nodes[13] = TangoNode(13, None, None, None,   None,     None, BLACK, 1, 3, True)
-
-    nodes[12] = TangoNode(12, None, None, nodes[11], nodes[13], None, RED, 0, 1, False)
-    nodes[15] = TangoNode(15, None, None, None,   None,     None, RED,   0, 3, False)
-    nodes[14] = TangoNode(14, None, None, nodes[12], nodes[15], None, BLACK, 1, 2, True)
-
-    nodes[3] = TangoNode(3, None, None, None,     None,     None, RED,   0, 3, False)
-    nodes[2] = TangoNode(2, None, None, nodes[1], nodes[3], None, BLACK, 1, 2, False)
-    nodes[8] = TangoNode(8, None, None, nodes[6], nodes[14], None, BLACK, 1, 0, False)
-    nodes[4] = TangoNode(4, None, None, nodes[2], nodes[8], None, BLACK, 2, 1, True)
-
-    t.root = nodes[4]
-
-    #tv.view()
-    #t.search(9)
-    #tv.view()
-    return tv
-
 if __name__ == '__main__':
     #sample_tree()
     main()
