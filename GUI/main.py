@@ -8,7 +8,7 @@ import sys
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-from dash.dependencies import Output, Input, Event, State
+from dash.dependencies import Output, Input, State
 #----------\DASH Modules-----------
 
 #---------------Trees--------------
@@ -131,7 +131,7 @@ def create_controls_search():
                         {'label': 'Visualize all the searches?', 'value': 'vis'}, 
                         {'label': 'Visualize steps?', 'value': 'step'}
                     ],
-                    values=['vis', 'step']
+                    values=['vis']
                 )
                 ], className='container', style={'color' : 'white', 'font-size' : '15pt'})
             ], className='row')
@@ -165,7 +165,9 @@ def create_controls_graph():
             }),
         dcc.Interval(
             id='graph-update',
-            interval=1000)
+            interval=1000,
+            n_intervals=0
+            )
         ], className='row my-graph')
     return controls
 
@@ -352,7 +354,8 @@ clicks = {
     'search' : None,
     'next' : None,
     'prev' : None, 
-    'add' : None
+    'add' : None,
+    'intervals' : 0
 }
 
 @app.callback(
@@ -419,11 +422,12 @@ def search_update(n_clicks, checked, value):
     [Input('graphs-choise', 'value'),
     Input('next-button', 'n_clicks'),
     Input('prev-button', 'n_clicks'),
-    Input('add-button', 'n_clicks')],
-    [State('add-box', 'value')],
-    events=[dash.dependencies.Event('graph-update', 'interval')]
+    Input('add-button', 'n_clicks'),
+    Input('graph-update', 'n_intervals')],
+    [State('add-box', 'value')]
+    #events=[dash.dependencies.Event('graph-update', 'interval')]
     )
-def update_graph(data_names, n_clicks_next=0, n_clicks_prev=0, n_clicks_add=0, value_add=1):
+def update_graph(data_names, n_clicks_next=0, n_clicks_prev=0, n_clicks_add=0, n_intervals=0, value_add=1):
     global PAUSED
     if n_clicks_next != clicks['next']:
         next_update()
@@ -446,11 +450,14 @@ def update_graph(data_names, n_clicks_next=0, n_clicks_prev=0, n_clicks_add=0, v
                 build_tree(my_range)
         clicks['add'] = n_clicks_add
         PAUSED = True
-    if not PAUSED:
+    if not PAUSED and clicks['intervals'] != n_intervals:
         next_update()
+        clicks['intervals'] = n_intervals
 
     graphs = dropdown_update(data_names)
     return graphs
+
+server = app.server
 
 if __name__ == '__main__':
     app.run_server(debug=False)
