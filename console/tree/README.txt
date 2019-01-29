@@ -1,2 +1,2 @@
 To run, in current directory type in cmd:
-python tester.py
+python tango_strict.py

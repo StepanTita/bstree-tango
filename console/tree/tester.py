@@ -42,7 +42,7 @@ if __name__ == "__main__":
 			val = 0
 			try:
 				line = f.readline()
-				val = int()
+				val = int(line)
 			except Exception as e:
 				print('Input file format error, test: "{}", declined'.format(line))
 				continue
@@ -50,8 +50,7 @@ if __name__ == "__main__":
 			res = tango_bst.search(val)
 			test_finish = time.time()
 			avg += test_finish - test_start
-
-			if res == val or res is None:
+			if res == val or (res is None and (val >= m or val < 0)):
 				continue
 			else:
 				print("MISTAKE")
@@ -60,4 +59,4 @@ if __name__ == "__main__":
 		f.close()
 		end = time.time()
 		avg /= n
-		print('Time: {}s'.format(end - start), 'Avg time per query: {:.20f}s'.format(avg))
+		print('Time: {:.10f}s'.format(end - start), 'Avg time per query: {:.20f}s'.format(avg))
