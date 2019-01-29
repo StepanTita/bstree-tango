@@ -1,3 +1,27 @@
+class BinaryTree(object):
+
+    """
+    Base for BST implementation.
+
+    Provides some necessary methods for plotting.
+    """
+
+    def __init__(self):
+        super().__init__()
+        self.root = None
+
+    def height(self):
+        """
+        Determine the height of the tree.
+        """
+        def h(node):
+            if node:
+                return max(h(node.left), h(node.right)) + 1
+            else:
+                return -1
+        return h(self.root)
+
+
 class Node(object):
 
     """
