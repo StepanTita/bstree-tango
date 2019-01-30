@@ -113,6 +113,7 @@ from tree.rb import RBNode, RED, BLACK
 from tree.naive import perfect_inserter
 #-------------------\AUX TREES-----------------------
 
+import time
 import datetime as dt
 
 #----------------------CONST-------------------------
@@ -283,6 +284,7 @@ class TangoTree(BinaryTree):
     #end_insert
 
     def search(self, key):
+        start = time.time()
         """
         Search for key in the tree.
 
@@ -293,7 +295,7 @@ class TangoTree(BinaryTree):
             The reference p of a node with p.key == key.
         """
         self.search_log.append({'text' : "Start search for {}".format(key), 
-            'act' : SEARCH_START, 'time' : dt.datetime.now()})
+            'act' : SEARCH_START, 'time' : 0, 'highlight' : True})
 
         # Start at the root.
         p = self.root
@@ -344,12 +346,13 @@ class TangoTree(BinaryTree):
             self._new_join(r, marked_p, p.depth)
 
         #print("Search: Found", p.key)----------------------------------------------------------------
+        end = time.time()
         if p is not None:
             self.search_log.append({'text' : "Search: Found {}".format(p.key), 
-                'act' : SEARCH_SUCCESS, 'time' : dt.datetime.now()})
+                'act' : SEARCH_SUCCESS, 'time' : end - start, 'highlight' : False})
         else:
             self.search_log.append({'text' : "Search: key not found", 
-                'act' : SEARCH_END, 'time' : dt.datetime.now()})
+                'act' : SEARCH_END, 'time' :  end - start, 'highlight' : False})
 
         self.parody.find(self.parody.root, key)
         if p is not None:
@@ -448,10 +451,8 @@ class TangoTree(BinaryTree):
         """
         # TODO explain cutting
         #print("Cut at", p.key, "depth", cut_depth)------------------------------------------------------------------
-
-
-        self.search_log.append({'text' : "Cut at {}".format(p.key), 
-            'act' : CUT, 'time' : dt.datetime.now()})
+        t_key = p.key
+        start = time.time()
 
         new_root = None
         p = self._aux_go_to_root(p)
@@ -507,13 +508,15 @@ class TangoTree(BinaryTree):
         #self.parody.update_roots(self.parody.root)
 
         #self.parody.view()
+        end = time.time()
+        self.search_log.append({'text' : "Cut at {}".format(t_key), 
+            'act' : CUT, 'time' : end - start, 'highlight' : False})
+
         return new_root
 
     def _new_join(self, top_path, n, cut_depth):
 
-        self.search_log.append({'text' : "Join at {}".format(top_path.key), 
-            'act' : JOIN, 'time' : dt.datetime.now()})
-
+        start = time.time()
         new_root = None
 
         lp = None
@@ -576,6 +579,9 @@ class TangoTree(BinaryTree):
 
         #self.parody.update_roots(self.parody.root)
         #self.parody.view()
+        end = time.time()
+        self.search_log.append({'text' : "Join at {}".format(top_path.key), 
+            'act' : JOIN, 'time' : end - start, 'highlight' : False})
 
         return new_root
 

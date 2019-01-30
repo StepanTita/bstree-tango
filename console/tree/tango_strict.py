@@ -239,6 +239,11 @@ class TangoTree(BinaryTree):
 
     def insert(self, key, data=None):
         """A naive insert function only used to construct the tree."""
+        try:
+            key = int(float(key))
+        except Exception as e:
+            raise Exception("Unsupportable key data type. Key: {}".format(key))
+
         if self.constructed:
             raise NotImplementedError(
                 "Original Tango Trees do not support insert")
@@ -280,7 +285,10 @@ class TangoTree(BinaryTree):
         Returns:
             The reference p of a node with p.key == key.
         """
-
+        try:
+            key = int(float(key))
+        except Exception as e:
+            print("Unsupportable key data type. Key: {}".format(key))
         # Start at the root.
         p = self.root
 

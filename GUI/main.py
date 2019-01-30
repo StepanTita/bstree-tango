@@ -8,7 +8,7 @@ import sys
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-from dash.dependencies import Output, Input, State
+from dash.dependencies import Output, Input, Event, State
 #----------\DASH Modules-----------
 
 #---------------Trees--------------
@@ -24,6 +24,8 @@ from viewer.treelayout import SimpleBinaryTreeLayout
 
 #---------------Rest---------------
 import random as rd
+import time
+import ast
 #--------------\Rest---------------
 
 #---------------Data---------------
@@ -41,6 +43,7 @@ texts = {
 best previous (trivial) competitive ratio of O(lg n)'
 }
 PAUSED = True
+CURRENT_LINE = 0
 #--------------\Data---------------
 
 def validate(value):
@@ -63,13 +66,11 @@ def validate_input(value_add):
     result = []
     for i in value_add:
         try:
-            result += [int(i)]
+            if int(float(i)) not in result:
+                result += [int(float(i))]
         except Exception as e:
-            pass
-        else:
-            pass
-        finally:
-            pass
+            print(e)
+    print(result)
     return result
 
 #------------------------------------------------View--------------------------------------------------
@@ -142,7 +143,7 @@ def create_controls_add():
     controls = html.Div(children=[
         html.Div(children=[
             dcc.Input(id='add-box', type='text', value='', className='nine columns', placeholder='1...32'),
-            html.Button('Add items', id='add-button', className='three columns')
+            html.Button('Add items', id='add-button', className='three columns', title='Create a new tree with stated range')
             ], className='container')
         ], className='row', style={'margin-bottom' : '20px', 'margin-top' : '30px', 'font-size' : '15pt'})
     return controls
@@ -165,9 +166,7 @@ def create_controls_graph():
             }),
         dcc.Interval(
             id='graph-update',
-            interval=1000,
-            n_intervals=0
-            )
+            interval=1000)
         ], className='row my-graph')
     return controls
 
@@ -180,7 +179,7 @@ def create_controls_slider():
                 max=10,
                 step=0.5,
                 value=5,
-                marks={i: 'Speed {}'.format(i) for i in range(1, 11)}
+                marks={i: 'Seconds {}'.format(i) for i in range(1, 11)}
             )
             ], className='container')
         ], className='row')
@@ -191,13 +190,14 @@ def create_controls():
         html.Div(children=[
             html.Button(children=[
                 html.Span(className='fa fa-backward')
-                    ], className='my-btn', id='prev-button'),
+                    ], className='my-btn', id='prev-button', title='Previous step'),
             html.Button(children=[
-                html.Span(className='bar bar-1'),
-                html.Span(className='bar bar-2')
-                    ], className='my-btn play centered', id='pause-button'),
+                'Pause/Play'
+                #html.Span(className='bar bar-1'),
+                #html.Span(className='bar bar-2')
+                    ], className='my-btn play centered', id='pause-button', title='Pause or unpause autoexecution'),
             html.Button(children=[
-                html.Span(className='fa fa-forward', id='next-button')
+                html.Span(className='fa fa-forward', id='next-button', title='Next step')
                     ], className='my-btn')
                 ], className='my-container d-flex justify-content-between')
         ], className="row moves")
@@ -205,11 +205,14 @@ def create_controls():
 #-----------\Controls--------------
 
 #--------------Table---------------
-def get_class_name(action):
+def get_class_name(action, highlight = False):
     danger = 'table-danger'
     default = 'default'
     success = 'table-success'
     info = 'table-info'
+    warning = 'table-warning'
+    if highlight:
+        return warning
     if action == tg.SEARCH_END:
         return danger
     elif action == tg.SEARCH_SUCCESS:
@@ -221,6 +224,7 @@ def get_class_name(action):
 
 def generate_table(df, max_rows=10):
     counter = 0
+    #df = df[-max_rows:]
     #df.reverse()
     table = html.Table(children=[
         html.Thead(children=[
@@ -233,12 +237,12 @@ def generate_table(df, max_rows=10):
         html.Tbody(children=[
             html.Tr(children=[
                 html.Td(i),
-                html.Td(d['text']),
-                html.Td(d['time'])
-                ], className=get_class_name(d['act'])) for d in df[-max_rows:]
+                html.Td(df[i - 1]['text']),
+                html.Td('{:.5f}'.format(df[i - 1]['time']))
+                ], className=get_class_name(df[i - 1]['act'], df[i - 1]['highlight'])) for i in range(1, len(df) + 1)
             ])
         ], className='table table-hover table-dark', style={'color' : colors['smoke'], 'margin-top' : '10px', 'font-size' : '13pt'})
-    return html.Div(children=[table], className='container', style={ 'max-height' : '500px'})
+    return html.Div(children=[table], className='container', style={ 'max-height' : '500px', 'overflow-y' : 'scroll'})
 #-------------\Table---------------
 
 #-----------------------------------------------\View--------------------------------------------------
@@ -292,6 +296,13 @@ app.layout = html.Div(children=[
     html.H1("Layout tango binary search tree", className='text-center'),
     create_controls_add(),
     create_controls_dropdown(),
+    html.Div(children=[
+        html.Div(children=[
+            html.Div(children=[
+                html.H2('', className='status', id='status')
+                ], className='container')
+            ], className='row')
+        ]),
     create_controls_graph(),
     create_controls(),
     create_controls_slider(),
@@ -354,9 +365,25 @@ clicks = {
     'search' : None,
     'next' : None,
     'prev' : None, 
-    'add' : None,
-    'intervals' : 0
+    'add' : None
 }
+
+s_clicks = {
+    'search' : None,
+    'next' : None,
+    'prev' : None
+}
+
+@app.callback(
+    dash.dependencies.Output('status', 'children'),
+    [dash.dependencies.Input('next-button', 'n_clicks')]
+    )
+def update_status(n_clicks_next):
+    time.sleep(1)
+    if n_clicks_next is not None and n_clicks_next > 0:
+        if tango_view.current_snapshot_index + 1 == len(tango_view.snapshots) and len(tango_bst.search_log) > 0:
+            return tango_bst.search_log[len(tango_bst.search_log) - 1]['text']
+    return ''
 
 @app.callback(
     dash.dependencies.Output('graph-update', 'interval'),
@@ -366,11 +393,39 @@ def update_speed(value):
 
 @app.callback(
     dash.dependencies.Output('table-container', 'children'),
-    [dash.dependencies.Input('search-button', 'n_clicks')])
-def update_table(n_clicks):
-    if n_clicks is not None and n_clicks > 0:
-        return [html.H1('Log of operations'),
+    [dash.dependencies.Input('search-button', 'n_clicks'),
+    Input('next-button', 'n_clicks'),
+    Input('prev-button', 'n_clicks')
+    ])
+def update_table(n_clicks, n_clicks_next, n_clicks_prev):
+    global CURRENT_LINE
+    if n_clicks != s_clicks['search']:
+        #time.sleep(1)
+        result = [html.H1('Log of operations'),
                 generate_table(tango_bst.search_log)]
+        #tango_bst.search_log.clear()
+        s_clicks['search'] = n_clicks
+        return result
+    else:
+        if tango_bst.step:
+            if n_clicks_next != s_clicks['next']:
+                s_clicks['next'] = n_clicks_next
+                if CURRENT_LINE >= 0 and CURRENT_LINE < len(tango_bst.search_log):
+                    tango_bst.search_log[CURRENT_LINE]['highlight'] = False
+                CURRENT_LINE += 1
+                if CURRENT_LINE >= 0 and CURRENT_LINE < len(tango_bst.search_log):
+                    tango_bst.search_log[CURRENT_LINE]['highlight'] = True
+            elif n_clicks_prev != s_clicks['prev']:
+                s_clicks['prev'] = n_clicks_next
+                if CURRENT_LINE >= 0 and CURRENT_LINE < len(tango_bst.search_log):
+                    tango_bst.search_log[CURRENT_LINE]['highlight'] = False
+                CURRENT_LINE -= 1
+                if CURRENT_LINE >= 0 and CURRENT_LINE < len(tango_bst.search_log):
+                    tango_bst.search_log[CURRENT_LINE]['highlight'] = True
+        result = [html.H1('Log of operations'),
+                generate_table(tango_bst.search_log)]
+        #tango_bst.search_log.clear()
+        return result
 
 @app.callback(
     dash.dependencies.Output('hidden-div', 'value'),
@@ -399,7 +454,9 @@ def update_output(value):
     Input('vis-all', 'values')],
     [State('search-box', 'value')])
 def search_update(n_clicks, checked, value):
-    print(checked)
+    tango_bst.search_log.clear()
+    global CURRENT_LINE
+    CURRENT_LINE = 0
     prev_snapshot_t = tango_view.current_snapshot_index
     prev_snapshot_n = naive_view.current_snapshot_index
     if n_clicks != clicks['search']:
@@ -422,12 +479,11 @@ def search_update(n_clicks, checked, value):
     [Input('graphs-choise', 'value'),
     Input('next-button', 'n_clicks'),
     Input('prev-button', 'n_clicks'),
-    Input('add-button', 'n_clicks'),
-    Input('graph-update', 'n_intervals')],
-    [State('add-box', 'value')]
-    #events=[dash.dependencies.Event('graph-update', 'interval')]
+    Input('add-button', 'n_clicks')],
+    [State('add-box', 'value')],
+    events=[dash.dependencies.Event('graph-update', 'interval')]
     )
-def update_graph(data_names, n_clicks_next=0, n_clicks_prev=0, n_clicks_add=0, n_intervals=0, value_add=1):
+def update_graph(data_names, n_clicks_next=0, n_clicks_prev=0, n_clicks_add=0, value_add=1):
     global PAUSED
     if n_clicks_next != clicks['next']:
         next_update()
@@ -441,23 +497,23 @@ def update_graph(data_names, n_clicks_next=0, n_clicks_prev=0, n_clicks_add=0, n
         if '...' in value_add:
             my_range = validate_input(value_add.split('...'))
             try:
-                build_tree(range(my_range[0], my_range[1]))
+                rg = range(my_range[0], my_range[1])
+                print(len(rg))
+                if len(rg) > 1 and len(rg) < 130:
+                    build_tree(rg)
             except Exception as e:
                 pass
         elif ',' in value_add:
             my_range = validate_input(value_add.split(','))
-            if len(my_range) > 0:
+            if len(my_range) > 1 and len(my_range) < 130:
                 build_tree(my_range)
         clicks['add'] = n_clicks_add
         PAUSED = True
-    if not PAUSED and clicks['intervals'] != n_intervals:
+    if not PAUSED:
         next_update()
-        clicks['intervals'] = n_intervals
 
     graphs = dropdown_update(data_names)
     return graphs
 
-server = app.server
-
 if __name__ == '__main__':
-    app.run_server(debug=False)
+    app.run_server(debug=True, threaded=True)
