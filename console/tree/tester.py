@@ -46,13 +46,13 @@ def test_console():
 		except Exception as e:
 			print(e)
 		if res == val or (res is None and (val >= tree_range or val < 0)):
+			end = time.time()
 			print('Time: {}'.format(end - start))
 			continue
 		else:
 			print("MISTAKE")
 			print('Test: ', val)
 			print('Return', res)
-		end = time.time()
 
 
 if __name__ == "__main__":
