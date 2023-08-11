@@ -8,7 +8,7 @@
 💃The main idea behind **Tango** trees is to maintain a dynamic set of preferred paths within the tree and perform rotations to ensure that the searched item is always within these preferred paths.
 
 ## Demo (clickable screenshot):
-[![Tango Trees Screenshot](https://github.com/StepanTita/bstree-tango/assets/44279105/3b54e10e-d84e-4a7d-8eec-28e72f1b4054)](https://www.youtube.com/watch?v=kwsRaTJJtiY "Tango Tree Demo")
+[![Tango Trees Screenshot](https://github-production-user-asset-6210df.s3.amazonaws.com/44279105/260085646-3b54e10e-d84e-4a7d-8eec-28e72f1b4054.png)](https://www.youtube.com/watch?v=kwsRaTJJtiY "Tango Tree Demo")
 
 ## 🔍 Requirements:
 - Python >= 3.6
